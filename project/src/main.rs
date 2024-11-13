@@ -1,8 +1,13 @@
 // main.rs
 
-mod cpu_vector_add;
+use tokio;
 
-fn main() {
+mod cpu_vector_add;
+mod gpu_vector_add;
+
+
+#[tokio::main]
+async fn main() {
 
     // Basic vectors for now
     let a = vec![1.0; 1000];
@@ -13,5 +18,15 @@ fn main() {
 
     // Print input and output
     println!("CPU Result: {:?}", cpu_result);
+
+    // GPU Vector ADdition
+    let gpu_future = gpu_vector_add::add_vectors_gpu(&a, &b);
+
+    // Wait for result
+
+    let gpu_result = gpu_future.await;
+
+    // Print input and output 
+    println!("GPU Result: {:?}", gpu_result);
 
 }
