@@ -1,32 +1,32 @@
-// main.rs
+mod cpu;
+mod gpu;
 
-use tokio;
+use tokio::runtime::Runtime;
+use std::env;
 
-mod cpu_vector_add;
-mod gpu_vector_add;
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
+        eprintln!("Usage: {} [cpu|gpu]", args[0]);
+        return;
+    }
 
+    let vec_size = 1000;
+    let a = vec![1.0; vec_size];
+    let b = vec![1.0; vec_size];
 
-#[tokio::main]
-async fn main() {
-
-    // Basic vectors for now
-    let a = vec![1.0; 1000];
-    let b = vec![2.0; 1000];
-    
-    // CPU Vector Addition
-    let cpu_result = cpu_vector_add::add_vectors_cpu(&a, &b);
-
-    // Print input and output
-    println!("CPU Result: {:?}", cpu_result);
-
-    // GPU Vector ADdition
-    let gpu_future = gpu_vector_add::add_vectors_gpu(&a, &b);
-
-    // Wait for result
-
-    let gpu_result = gpu_future.await;
-
-    // Print input and output 
-    println!("GPU Result: {:?}", gpu_result);
-
+    match args[1].as_str() {
+        "cpu" => {
+            let result = cpu::add_vectors_cpu(&a, &b);
+            println!("CPU result: {:?}", result);
+        }
+        "gpu" => {
+            let runtime = Runtime::new().unwrap();
+            let result = runtime.block_on(async { gpu::add_vectors_gpu(&a, &b).await });
+            println!("GPU result: {:?}", result);
+        }
+        _ => {
+            eprintln!("Unknown option: {}. Use 'cpu' or 'gpu'", args[1]);
+        }
+    }
 }

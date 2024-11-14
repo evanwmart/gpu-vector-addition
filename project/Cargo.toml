@@ -1,12 +1,9 @@
-# Cargo.toml
-
 [package]
 name = "project"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-criterion = "0.4"  
 bytemuck = "1.14"
 futures-intrusive = "0.5"
 cfg-if = "1"
@@ -16,3 +13,12 @@ log = "0.4"
 wgpu = "22.0"
 pollster = "0.3"
 tokio = { version = "1.0", features = ["full"] }
+rand = "0.8"  
+
+[dev-dependencies]
+criterion = "0.5"
+proptest = "1.0"
+
+[[bench]]
+name = "vector_addition"
+harness = false
